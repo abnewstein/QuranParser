@@ -14,7 +14,7 @@ def parse_arguments():
         "--max-chapter", type=int, default=114, help="maximum chapter to check"
     )
     parser.add_argument(
-        "--max-note", type=int, default=20, help="maximum note to check"
+        "--max-note", type=int, default=50, help="maximum note to check"
     )
     return parser.parse_args()
 
@@ -33,12 +33,6 @@ def load_existing_results():
         return {}
 
 
-def save_results(key, data):
-    with open(result_file, "a") as f:
-        line = json.dumps({key: data})
-        f.write(line + "\n")
-
-
 def fetch_data(chapter, verse, note):
     url = "https://reader.quranite.com/notes/search"
     response = requests.get(
@@ -47,14 +41,24 @@ def fetch_data(chapter, verse, note):
 
     if response.status_code != 200:
         logging.error("API request failed with status code %s", response.status_code)
-        return None
+        return None, None
 
-    return response.json()
+    return (
+        f"{chapter}:{verse}:{note}",
+        response.json(),
+    )  # Return a pair: key, data
+
+
+def save_results(data):
+    with open(result_file, "a") as f:
+        line = json.dumps(data)
+        f.write(line + "\n")
 
 
 def main():
     args = parse_arguments()
     results = load_existing_results()
+    keys = set(results.keys())
 
     with open("data/quran-chapters.json", "r") as f:
         chapters_info = json.load(f)
@@ -62,22 +66,26 @@ def main():
     for chapter_info in chapters_info:
         chapter = chapter_info["number"]
         max_verse = chapter_info["versesCount"]
+        new_data = {}
         for verse in range(1, max_verse + 1):
             for note in range(1, args.max_note + 1):
-                key = f"{chapter}:{verse}:{note}"
-                if key not in results:
-                    data = fetch_data(chapter, verse, note)
-                    if data is None:
-                        logging.info(
-                            f"No data found for chapter {chapter}, verse {verse}, note {note}"
-                        )
-                        break
+                key, data = fetch_data(chapter, verse, note)
+                if data is None:
+                    logging.info(
+                        f"No data found for chapter {chapter}, verse {verse}, note {note}"
+                    )
+                    break
 
-                    logging.info(f"Successfully fetched data for {key}")
-                    save_results(key, data)
+                logging.info(f"Successfully fetched data for {key}")
+                new_data[key] = data
+                keys.add(key)
 
                 # Sleep for rate limiting
                 time.sleep(0.1)
+
+        # Save results after each chapter
+        save_results(new_data)
+        results.update(new_data)
 
 
 if __name__ == "__main__":

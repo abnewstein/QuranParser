@@ -62,20 +62,17 @@ while True:
             if first_sup:
                 first_sup.replace_with("")
             verse_text = str(english_data.text).strip()
-            sup_tags = english_data.find_all("sup", class_="ajax_lookup")
+            sup_tags = english_data.find_all("a", class_="showComment")
             if sup_tags:
                 for tag in sup_tags:
                     note = tag.text
                     verse_key = f"{chapter}:{verseNumber}"
                     if verse_key not in quran:
                         quran[verse_key] = []  # type: ignore
-                    quran[verse_key].extend(  # type: ignore
-                        [
-                            i
-                            for i in range(len(verse_text))
-                            if verse_text.startswith(note, i)
-                        ]
-                    )
+                    for i in range(len(verse_text)):
+                        if verse_text.startswith(note, i):
+                            quran[verse_key].append(i)  # type: ignore
+                            break  # break the loop after the first match
                     write_progress(quran)
 
         page = page + 1

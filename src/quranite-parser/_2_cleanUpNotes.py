@@ -19,14 +19,6 @@ with open("data/notes/en_sg_notes-text.json") as f:
         if i % 1000 == 0:  # Print a progress message for every 1000 lines processed
             print(f"Processed {i} lines")
 
-# Remove duplicates (in case you have duplicate chapter:verse:note with same text)
-seen = set()
-final_data = {}
-for k, v in cleaned_data.items():
-    if v not in seen:
-        seen.add(v)
-        final_data[k] = v
-
 # Write cleaned data back to json
 with open("data/notes/en_sg_notes-text_cleaned.json", "w") as f:
-    json.dump(final_data, f)
+    json.dump(cleaned_data, f)
