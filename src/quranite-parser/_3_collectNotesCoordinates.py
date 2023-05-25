@@ -12,7 +12,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 def read_progress():
     if os.path.exists("data/notes/en_sg_notes-coordinates.json"):
-        with open("data/notes/en_sg_notes-coordinates.json", "r") as infile:
+        with open(file="data/notes/en_sg_notes-coordinates.json", mode="r") as infile:
             quran = json.load(infile)
             last_key = list(quran.keys())[-1]
             chapter, _ = map(int, last_key.split(":"))
@@ -22,7 +22,7 @@ def read_progress():
 
 def write_progress(quran):
     try:
-        with open("data/notes/en_sg_notes-coordinates.json", "w") as outfile:
+        with open(file="data/notes/en_sg_notes-coordinates.json", mode="w") as outfile:
             json.dump(quran, outfile)
     except Exception as e:
         print("Failed to write to JSON: ", e)

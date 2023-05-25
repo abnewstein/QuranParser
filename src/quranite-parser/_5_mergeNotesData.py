@@ -1,9 +1,9 @@
 import json
 
-with open("data/notes/en_sg_notes-coordinates.json") as f:
+with open(file="data/notes/en_sg_notes-coordinates.json") as f:
     notes_coords_data = json.load(f)
 
-with open("data/notes/en_sg_notes-text_cleaned.json") as f:
+with open(file="data/notes/en_sg_notes-text_cleaned.json") as f:
     notes_text_data = json.load(f)
 
 merged_data = []

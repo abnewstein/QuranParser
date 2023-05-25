@@ -2,7 +2,7 @@ import json
 from bs4 import BeautifulSoup
 
 cleaned_data = {}
-with open("data/notes/en_sg_notes-text.json") as f:
+with open(file="data/notes/en_sg_notes-text.json") as f:
     for i, line in enumerate(f, 1):  # Start enumerating from 1
         try:
             json_line = json.loads(line)
@@ -20,5 +20,5 @@ with open("data/notes/en_sg_notes-text.json") as f:
             print(f"Processed {i} lines")
 
 # Write cleaned data back to json
-with open("data/notes/en_sg_notes-text_cleaned.json", "w") as f:
+with open(file="data/notes/en_sg_notes-text_cleaned.json", mode="w") as f:
     json.dump(cleaned_data, f)
