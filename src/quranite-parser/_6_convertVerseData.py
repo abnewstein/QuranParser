@@ -10,26 +10,22 @@ def read_original_data(file_path):
             return item["data"]
     return []
 
-
-def separate_translations(quran_data):
-    english_data = []
-    arabic_data = []
-    current_id = 1
+def separate_translations(quran_data, language):
+    translations = []
 
     for verse in quran_data:
         if int(verse["chapter"]) > 1 and int(verse["verse"]) == 0:
             continue
 
-        english_verse = {"id": current_id, "chapterNumber": int(verse["chapter"]), "verseNumber": int(verse["verse"]),
-                         "text": verse["english"]}
-        arabic_verse = {"id": current_id, "chapterNumber": int(verse["chapter"]), "verseNumber": int(verse["verse"]),
-                        "text": verse["arabic"]}
-        english_data.append(english_verse)
-        arabic_data.append(arabic_verse)
-        current_id += 1
+        translation = [int(verse["chapter"]), int(verse["verse"]), verse[language]]
+        translations.append(translation)
 
-    return english_data, arabic_data
+    return translations
 
+def save_translation_data(file_path, data):
+    with open(file_path, 'w', encoding="utf-8") as file:
+        # Compact JSON output by eliminating white space
+        json.dump(data, file, separators=(',', ':'), ensure_ascii=False)
 
 def create_directories(base_path, *directories):
     for directory in directories:
@@ -37,22 +33,16 @@ def create_directories(base_path, *directories):
         if not os.path.exists(path):
             os.makedirs(path)
 
-
-def save_translation_data(file_path, data):
-    with open(file_path, 'w', encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False)
-
-
 def main():
     quran_data = read_original_data('data/versesimple.json')
-    english_data, arabic_data = separate_translations(quran_data)
+    english_translations = separate_translations(quran_data, 'english')
+    arabic_translations = separate_translations(quran_data, 'arabic')
 
     translations_dir = 'data/translations'
     create_directories(translations_dir)
 
-    save_translation_data(os.path.join(translations_dir, 'en_sam_gerrans.json'), english_data)
-    save_translation_data(os.path.join(translations_dir, 'ar_original.json'), arabic_data)
-
+    save_translation_data(os.path.join(translations_dir, 'en_sam_gerrans.json'), english_translations)
+    save_translation_data(os.path.join(translations_dir, 'ar_original.json'), arabic_translations)
 
 if __name__ == '__main__':
     main()
