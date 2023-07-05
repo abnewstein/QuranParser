@@ -53,7 +53,7 @@ def get_insert_position(verse_text, note_index, adjustment):
 def main():
     try:
         dir = os.path.dirname(__file__)
-        notesFile = os.path.join(dir, '../data/notes/notes_en_sam-gerrans.json')
+        notesFile = os.path.join(dir, '../data/notes/notes_en_sam-gerrans_draft.json')
         versesFile = os.path.join(dir, '../data/translations/en_sam-gerrans.json')
         outputFile = os.path.join(dir, '../data/translations/en_sam-gerrans_with-notes.json')
 

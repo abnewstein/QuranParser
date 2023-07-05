@@ -1,10 +1,12 @@
 import json
+import os 
 
 # Load the JSON data
-with open("data/notes/en_sg_notes-text_cleaned.json") as f:
+dir = os.path.dirname(__file__)
+with open(file=os.path.join(dir,"../data/notes/en_sg_notes-text_cleaned.json")) as f:
     notes_text = json.load(f)
 
-with open("data/notes/en_sg_notes-coordinates.json") as f:
+with open(file=os.path.join(dir,"../data/notes/en_sg_notes-coordinates.json")) as f:
     notes_coordinates = json.load(f)
 
 # Convert the keys in notes_coordinates to match the format in notes_text
